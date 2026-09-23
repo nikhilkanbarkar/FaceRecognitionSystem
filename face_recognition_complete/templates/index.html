@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Command Center</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+
+    <header class="topbar">
+        <div>
+            <div class="eyebrow">AI / COMPUTER VISION</div>
+            <h1>Face Recognition Command Center</h1>
+            <p class="subtitle">YuNet detection + ArcFace recognition + real-time tracking</p>
+        </div>
+        <div class="system-status" id="systemStatus">
+            <span class="status-dot"></span>
+            <span>STARTING</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-grid">
+            <div class="camera-panel panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="section-label">LIVE CAMERA</span>
+                        <h2>Recognition Feed</h2>
+                    </div>
+                    <span class="live-pill">LIVE</span>
+                </div>
+
+                <div class="video-wrap">
+                    <img src="{{ url_for('video_feed') }}" alt="Live face recognition camera feed">
+                    <div class="video-overlay">
+                        <span id="feedState">INITIALIZING CAMERA...</span>
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <span>FACES</span>
+                        <strong id="facesCount">0</strong>
+                    </div>
+                    <div class="metric">
+                        <span>RECOGNISED</span>
+                        <strong id="recognisedCount">0</strong>
+                    </div>
+                    <div class="metric">
+                        <span>UNKNOWN</span>
+                        <strong id="unknownCount">0</strong>
+                    </div>
+                    <div class="metric">
+                        <span>FPS</span>
+                        <strong id="fps">0.0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="people-panel panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="section-label">IDENTITY MONITOR</span>
+                        <h2>Recognised People</h2>
+                    </div>
+                    <span class="count-badge" id="peopleCount">0</span>
+                </div>
+
+                <div id="peopleList" class="people-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">◎</div>
+                        <h3>No faces detected</h3>
+                        <p>Stand in front of the camera to begin recognition.</p>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="pipeline panel">
+            <div class="panel-heading">
+                <div>
+                    <span class="section-label">SYSTEM ARCHITECTURE</span>
+                    <h2>Recognition Pipeline</h2>
+                </div>
+                <div class="threshold">Threshold <strong>{{ "%.2f"|format(threshold) }}</strong></div>
+            </div>
+
+            <div class="pipeline-flow">
+                <div class="stage">
+                    <span class="stage-number">01</span>
+                    <strong>Camera</strong>
+                    <small>Live frame</small>
+                </div>
+                <span class="arrow">→</span>
+                <div class="stage">
+                    <span class="stage-number">02</span>
+                    <strong>YuNet</strong>
+                    <small>Face detection</small>
+                </div>
+                <span class="arrow">→</span>
+                <div class="stage">
+                    <span class="stage-number">03</span>
+                    <strong>ArcFace</strong>
+                    <small>Embedding</small>
+                </div>
+                <span class="arrow">→</span>
+                <div class="stage">
+                    <span class="stage-number">04</span>
+                    <strong>Similarity</strong>
+                    <small>Cosine matching</small>
+                </div>
+                <span class="arrow">→</span>
+                <div class="stage">
+                    <span class="stage-number">05</span>
+                    <strong>Profile</strong>
+                    <small>Person details</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="info-grid">
+            <article class="panel info-card">
+                <span class="section-label">ABOUT THE PROJECT</span>
+                <h2>What this system does</h2>
+                <p>
+                    This application performs real-time face detection and recognition
+                    from a camera stream. Detected faces are converted into ArcFace
+                    embeddings and compared against the stored face database using
+                    cosine similarity.
+                </p>
+                <p>
+                    When a face is recognised, the dashboard retrieves its profile
+                    from <code>person_details.json</code> and displays the person's
+                    name, relationship, status, description and available photo.
+                </p>
+            </article>
+
+            <article class="panel info-card">
+                <span class="section-label">RUNTIME</span>
+                <h2>System information</h2>
+                <div class="runtime-row"><span>Detector</span><strong>YuNet</strong></div>
+                <div class="runtime-row"><span>Recognizer</span><strong>ArcFace</strong></div>
+                <div class="runtime-row"><span>Tracking</span><strong>Centroid tracking</strong></div>
+                <div class="runtime-row"><span>Voice</span><strong>pyttsx3</strong></div>
+                <div class="runtime-row"><span>Uptime</span><strong id="uptime">0s</strong></div>
+            </article>
+        </section>
+
+        <div id="errorBox" class="error-box hidden"></div>
+    </main>
+
+    <footer>
+        Face Recognition Command Center · Local AI application
+    </footer>
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
